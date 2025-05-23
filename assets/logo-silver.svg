@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .text { 
+      font-family: 'Arial', sans-serif; 
+      font-weight: bold; 
+      fill: #A9A9A9;
+    }
+    .icon {
+      fill: #A9A9A9;
+    }
+  </style>
+  
+  <!-- Hexagon icon -->
+  <polygon class="icon" points="25,5 45,15 45,35 25,45 5,35 5,15" stroke="#A9A9A9" stroke-width="2" fill="none"/>
+  
+  <!-- Inner details -->
+  <line x1="15" y1="20" x2="35" y2="20" stroke="#A9A9A9" stroke-width="2"/>
+  <line x1="15" y1="30" x2="35" y2="30" stroke="#A9A9A9" stroke-width="2"/>
+  <line x1="25" y1="15" x2="25" y2="35" stroke="#A9A9A9" stroke-width="2"/>
+  
+  <!-- Text -->
+  <text x="60" y="30" class="text" font-size="24">IRONBYTE</text>
+</svg>
