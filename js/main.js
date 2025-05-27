@@ -483,8 +483,113 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Auto-advance slides every 5 seconds
-        setInterval(nextSlide, 5000);
+        // Touch/Swipe support for mobile
+        let startX = 0;
+        let endX = 0;
+        let isDragging = false;
+
+        const handleTouchStart = (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+            track.style.transition = 'none';
+        };
+
+        const handleTouchMove = (e) => {
+            if (!isDragging) return;
+            endX = e.touches[0].clientX;
+            const diff = startX - endX;
+            const currentTransform = -currentIndex * 100;
+            const newTransform = currentTransform - (diff / track.offsetWidth) * 100;
+            track.style.transform = `translateX(${newTransform}%)`;
+        };
+
+        const handleTouchEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            track.style.transition = 'transform 0.5s ease';
+
+            const diff = startX - endX;
+            const threshold = 50; // Minimum swipe distance
+
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    // Swiped left - next slide
+                    nextSlide();
+                } else {
+                    // Swiped right - previous slide
+                    prevSlide();
+                }
+            } else {
+                // Snap back to current slide
+                updateSlider();
+            }
+        };
+
+        // Add touch event listeners
+        track.addEventListener('touchstart', handleTouchStart, { passive: true });
+        track.addEventListener('touchmove', handleTouchMove, { passive: true });
+        track.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+        // Mouse drag support for desktop
+        let isMouseDown = false;
+        let mouseStartX = 0;
+
+        const handleMouseDown = (e) => {
+            isMouseDown = true;
+            mouseStartX = e.clientX;
+            track.style.transition = 'none';
+            track.style.cursor = 'grabbing';
+        };
+
+        const handleMouseMove = (e) => {
+            if (!isMouseDown) return;
+            const diff = mouseStartX - e.clientX;
+            const currentTransform = -currentIndex * 100;
+            const newTransform = currentTransform - (diff / track.offsetWidth) * 100;
+            track.style.transform = `translateX(${newTransform}%)`;
+        };
+
+        const handleMouseUp = (e) => {
+            if (!isMouseDown) return;
+            isMouseDown = false;
+            track.style.transition = 'transform 0.5s ease';
+            track.style.cursor = 'grab';
+
+            const diff = mouseStartX - e.clientX;
+            const threshold = 50;
+
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            } else {
+                updateSlider();
+            }
+        };
+
+        // Add mouse event listeners
+        track.addEventListener('mousedown', handleMouseDown);
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+
+        // Prevent text selection while dragging
+        track.addEventListener('selectstart', (e) => e.preventDefault());
+
+        // Auto-advance slides every 6 seconds (increased for better UX)
+        let autoSlideInterval = setInterval(nextSlide, 6000);
+
+        // Pause auto-advance on hover/touch
+        track.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+        track.addEventListener('mouseleave', () => {
+            autoSlideInterval = setInterval(nextSlide, 6000);
+        });
+
+        track.addEventListener('touchstart', () => clearInterval(autoSlideInterval));
+        track.addEventListener('touchend', () => {
+            autoSlideInterval = setInterval(nextSlide, 6000);
+        });
     }
 });
 
